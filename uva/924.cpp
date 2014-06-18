@@ -61,75 +61,56 @@ template<class VeX, class EdX> struct Graph {
         g[to].PB(ed1);
     }
 
-    bool isEuler() {
-        REP(i, SZ(g)) if(SZ(g[i]) & 1) return false;
-        return true;
-    }
+    void bfs(int s) {
+        VI q; q.PB(s); g[s].d = 0;
 
-    void dfs(int v, VI& res, VI& eds) {
-        while(g[v].k < SZ(g[v])) {
-            int i = g[v].k;
-            int to = g[v][i].to;
-            if(!eds[g[v][i].i]) {
-                eds[g[v][i].i] = 1;
-                dfs(to, res, eds);
-                res.PB(v);
+        for(size_t i = 0; i < q.size(); ++i) {
+            FOREACH(it, g[q[i]]) if(g[it->to].d == INF) {
+                g[it->to].d = g[q[i]].d + 1;
+                q.PB(it->to);
             }
-            ++g[v].k;
         }
-    }
-
-    VI eulerCycle(int m) {
-        VI ans, eds(m, 0);
-        int v = -1;
-        REP(i, SZ(g)) if(g[i].v == 1) {
-            v = i;
-            break;
-       }
-
-        dfs(v, ans, eds);
-        return ans;
     }
 };
 
-struct VeX { int s, k, v; };
+struct VeX { int d; };
 
 struct EdX {
     int i, rev;
-    EdX(int i_) : i(i_) {}
 };
 
-void algo(int tc) {
+void algo() {
     int n; cin >> n;
-    Graph<VeX,EdX> g(50);
-    REP(i, SZ(g.g)) {
-        g.g[i].s = g.g[i].v = -1;
-        g.g[i].k = 0;
-    }
-
+    Graph<VeX,EdX> g(n);
     REP(i, n) {
-        int a,b; cin >> a >> b;
-        g.EdgeU(a-1,b-1, EdX(i));
-        g.g[a-1].v = g.g[b-1].v = 1;
+        int m; cin >> m;
+        while(m--) {
+            int x; cin >> x;
+            g.EdgeD(i, x);
+        }
     }
 
-    if(!g.isEuler()) {
-        cout << "Case #" << tc << "\nsome beads may be lost\n";
-        return;
+    int tc; cin >> tc;
+    while(tc--) {
+        int v; cin >> v;
+        REP(i, SZ(g.g)) g.g[i].d = INF;
+        g.bfs(v);
+        VI ds(n, 0);
+        REP(i, n) if(g.g[i].d < INF) {
+            ++ds[g.g[i].d];
+        }
+
+        int im = 0;
+        ds[0] = 0;
+        REP(i, SZ(ds)) if(ds[im] < ds[i]) im = i;
+
+        if(!im) cout << im << "\n";
+        else cout << ds[im] << " " << im << "\n";
     }
 
-    VI res = g.eulerCycle(n);
-    reverse(ALL(res));
-    int mod = SZ(res);
-
-    cout << "Case #" << tc <<"\n";
-    REP(i, SZ(res))
-        cout << res[i] + 1 << " " << res[(i+1) % mod] + 1<< "\n";
 }
 
 int main() {
-    int tc; cin >> tc;
-    REP(i, tc) { algo(i+1); cout << "\n"; }t
+    algo();
     return 0;
 }
-
