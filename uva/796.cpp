@@ -61,27 +61,28 @@ template<class VeX, class EdX> struct Graph {
         g[to].PB(ed1);
     }
 
-    int idfs;
-    void dfs(int v = 0) {
-        idfs = 0;
-        REP(i, SZ(g)) g[i].low = g[i].s = g[i].p = -1;
-        dfs0(0);
-    }
-
+    int inTime;
     int dfs0(int v) {
-        int low;
-        g[v].s = low = idfs++;
+        if(g[v].s >= 0) return g[v].s;
+        g[v].s = inTime++;
+        int low = g[v].s;
         FOREACH(it, g[v]) {
             if(g[it->to].s < 0) {
                 g[it->to].p = v;
-                low = min(dfs0(it->to), low);
+                low = min(low, dfs0(it->to));
             }
-            else if(it->to != g[v].p)
-                low = min(g[it->to].s, low);
+            else if(g[v].p != it->to) {
+                low = min(low, g[it->to].s);
+            }
         }
-        g[v].f = idfs++;
         g[v].low = low;
         return low;
+    }
+
+    void dfs() {
+        REP(i, SZ(g)) g[i].low = g[i].s = g[i].p = g[i].f = -1;
+        inTime = 0;
+        REP(i, SZ(g)) if(g[i].s < 0) dfs0(i);
     }
 };
 
@@ -93,47 +94,38 @@ struct EdX {
 
 void algo(int n) {
     Graph<VeX, EdX> g(n);
-
-    set<pii> eds;
-    for(string line; getline(cin, line);) {
+    string line;
+    REP(_, n) {
+        getline(cin, line);
         stringstream ss(line);
         int v, k; ss >> v;
-        if(!v) break;
+        string nothing; ss >> nothing;
         while(ss >> k) {
-            if(eds.find(MP(min(v,k), max(v,k))) == eds.end()) {
-                g.EdgeU(v-1, k-1);
-                eds.insert(MP(min(v,k), max(v,k)));t
-            }
+            g.EdgeU(v, k);
         }
     }
-
     g.dfs();
-
-    REP(i, n) { if(g.g[i].s < 0) { cout << n << "\n"; return;}}
-    VI art(n, 0);
+    vector<pii> bris;
     REP(i, n) {
-        if(g.g[i].p == -1) {
-            int chs = 0;
-            FOREACH(it, g.g[i]) if(g.g[it->to].p == i) ++chs;
-            if(chs >= 2) art[i] = 1;
-        }
-        else if(g.g[g.g[i].p].p != -1 && g.g[i].low > g.g[g.g[g.g[i].p].p].s) {
-            art[g.g[i].p] = 1;
-        }
+        int parent = g.g[i].p;
+        if(parent != -1 &&  g.g[parent].s < g.g[i].low)
+            bris.PB(MP(min(parent, i), max(parent, i)));
     }
-
-    int ans = accumulate(ALL(art), 0);
-    cout << ans << "\n";
+    sort(ALL(bris));
+    cout << SZ(bris) << " critical links\n";
+    FOREACH(it, bris) cout << it->first << " - " << it->second << "\n";
 }
+
 
 int main() {
     ios_base::sync_with_stdio(false);
-    int n;
     string line;
     while(getline(cin, line)) {
-        stringstream ss(line); ss >> n;
-        if(!n) break;
+        if(!line.length()) continue;
+        stringstream ss(line);
+        int n; ss >> n;
         algo(n);
+        cout << "\n";
     }
 
     return 0;
