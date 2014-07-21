@@ -61,47 +61,77 @@ template<class VeX, class EdX> struct Graph {
         g[to].PB(ed1);
     }
 
-    bool dfsColor(int v, bool color) {
-        bool result = true;
-        g[v].c = color;
-        FOREACH(it, g[v]) {
-            if(g[it->to].c < 0)
-                result = result && dfsColor(it->to, !color);
-            else result = result && (g[it->to].c != color);
+    int bfs(int v0, int v1) {
+        REP(i, SZ(g)) g[i].d = -1;
 
+        queue<int> q;
+        g[v0].d = 0;
+        q.push(v0);
+
+        while(!q.empty()) {
+            int v = q.front(); q.pop();
+            FOREACH(it, g[v]) if(g[it->to].d < 0) {
+                g[it->to].d = g[v].d + 1;
+                q.push(it->to);
+            }
         }
-        return result;
-    }
 
-    bool isBip() {
-        REP(i, SZ(g)) g[i].c = -1;
-        return dfsColor(0, 0);
+        return g[v1].d;
     }
 };
 
-struct VeX { int c; };
+struct VeX { int d; };
 
 struct EdX { int rev;};
 
-void algo(int n) {
-    int m; cin >> m;
-    Graph<VeX,EdX> g(n);
+bool isClose(string& s0, string& s1) {
+    if(s0.length() != s1.length()) return false;
 
-    while(m--) {
-        int a,b; cin >> a >> b;
-        g.EdgeU(a,b);
+    uint conf = 0u;
+    REP(i, LN(s0)) if(s0[i] != s1[i]) ++conf;
+
+    return conf == 1;
+}
+
+void algo() {
+    string line, word;
+    getline(cin, line);
+    vector<string> words;
+    while(line != "*") {
+        stringstream ss(line);
+        ss >> word;
+        words.PB(word);
+        getline(cin, line);
     }
-    cout << ((g.isBip()) ? "BICOLORABLE.\n" : "NOT BICOLORABLE.\n");
+
+    Graph<VeX, EdX> g(SZ(words));
+    REP(i, SZ(words))
+        FOR(j, i + 1, SZ(words) - 1) if(isClose(words[i], words[j])) {
+            g.EdgeU(i,j);
+        }
+
+    getline(cin, line);
+    while(line != "") {
+        stringstream ss(line);
+        string s0, s1;
+        ss >> s0 >> s1;
+        int k = -1, j = -1;
+        REP(i, SZ(words)) if(words[i] == s0) { k = i; break; }
+        REP(i, SZ(words)) if(words[i] == s1) { j = i; break; }
+        int dist = g.bfs(k, j);
+        cout << s0 << " " << s1 << " " << dist << "\n";
+        getline(cin, line);
+    }
 }
 
 int main() {
     ios_base::sync_with_stdio(false);
-
     int n; cin >> n;
-    while(n > 0) {
-        algo(n);
-        cin >> n;
+    while(n--) {
+        algo();
+        if(n > 0) std::cout << "\n";
     }
 
     return 0;
 }
+

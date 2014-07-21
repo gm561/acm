@@ -102,6 +102,7 @@ struct EdX {
 void algo(int tc) {
     int n; cin >> n;
     Graph<VeX,EdX> g(50);
+
     REP(i, SZ(g.g)) {
         g.g[i].s = g.g[i].v = -1;
         g.g[i].k = 0;
@@ -129,7 +130,6 @@ void algo(int tc) {
 
 int main() {
     int tc; cin >> tc;
-    REP(i, tc) { algo(i+1); cout << "\n"; }t
+    REP(i, tc) { algo(i+1); cout << "\n"; }
     return 0;
 }
-
