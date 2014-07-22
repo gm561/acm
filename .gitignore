@@ -11,3 +11,9 @@
 *.lai
 *.la
 *.a
+
+//ignore test folder
+uva/test/
+
+*
+!*.cpp
