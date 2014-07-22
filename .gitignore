@@ -1,19 +1,12 @@
-# Compiled Object files
-*.slo
-*.lo
-*.o
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-
-//ignore test folder
-uva/test/
-
+#Ignore everything
 *
+
+#Whitelist subdirectories
+!*/
+
+#Whitelist the gitignore itself
+!.gitignore
+
+#Whitelist .cpp and .h files
+!*.h
 !*.cpp

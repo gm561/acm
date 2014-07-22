@@ -78,12 +78,6 @@ template<class VeX, class EdX> struct Graph {
             }
         }
 
-        // int dir, row;
-        // int v2 = g[v1 + mn].p;
-        // cout << g[v2].d << endl;
-        // cout << "Dir " << (dir=(v2 / mn)) << "\t";
-        // cout << " i " << (row=((v2 - dir*mn) / m)) << "\t";
-        // cout << " j " << v2 - dir*mn - m*row << "\n";
         return min(min(g[v1].d, g[v1 + mn].d), min(g[v1+ 2*mn].d, g[v1 + 3*mn].d));
     }
 };
