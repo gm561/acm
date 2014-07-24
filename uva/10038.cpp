@@ -33,9 +33,7 @@ void algo(const string& line) {
 int main() {
     ios_base::sync_with_stdio(false);
     string line;
-    while(getline(cin, line)) {
-        algo(line);
-    }
+    while(getline(cin, line)) algo(line);
 
     return 0;
 }
