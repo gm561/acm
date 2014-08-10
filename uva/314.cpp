@@ -137,7 +137,7 @@ void algo(int n, int m) {
         }
     }
 
-    int s0,s1,e0,e1; cin >> s0 >> s1 >> e0 >> e1;
+    int s0s1,e0,e1; cin >> s0 >> s1 >> e0 >> e1;
     string dir; cin >> dir;
     int x = 0; //north
     x = (dir == "east") ? 1 : x;
